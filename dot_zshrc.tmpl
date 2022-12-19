@@ -12,6 +12,13 @@ export DOCKER_DEFAULT_PLATFORM=linux/arm64
 {{- else }}
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
 {{- end }}
+if command -v aws &> /dev/null; then
+  ECR_REGION=us-west-2
+  ECR_ACCOUNT=320240270431
+  aws ecr get-login-password --region ${ECR_REGION} | \
+    docker login --username AWS --password-stdin \
+      ${ECR_ACCOUNT}.dkr.ecr.${ECR_REGION}.amazonaws.com
+fi
 
 # Prompt
 autoload -U colors && colors
