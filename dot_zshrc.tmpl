@@ -4,14 +4,14 @@ export PATH=$HOME/bin:/usr/local/bin:$PATH
 export PATH=/opt/homebrew/bin:/opt/homebrew/sbin:$PATH
 
 # Editor
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='emacs'
-else
-  export EDITOR='emacs'
-fi
+export EDITOR='emacs'
 
 # Docker
-DOCKER_DEFAULT_PLATFORM=linux/amd64
+{{- if eq .chezmoi.arch "arm64" }}
+export DOCKER_DEFAULT_PLATFORM=linux/arm64
+{{- else }}
+export DOCKER_DEFAULT_PLATFORM=linux/amd64
+{{- end }}
 
 # Prompt
 autoload -U colors && colors
@@ -19,12 +19,14 @@ PROMPT="%F{red}% %m: %F{cyan}% %d %F{green}% "$'\n'"$ %f"
 
 
 #-- oh-my-zsh --#
+{{- if eq .chezmoi.os "darwin" }}
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
 # Which plugins would you like to load?
 plugins=(cp colored-man-pages extract git macos pip screen wd)
 source $ZSH/oh-my-zsh.sh
+{{- end }}
 
 
 #-- Aliases --#
@@ -58,7 +60,9 @@ alias eamcs="emacs"
 # Directory
 mcd () { mkdir "$@" && cd "$_"; }
 # scp file from rick VM
+{{- if eq .chezmoi.hostname "Nicholass-Air" }}
 scp_rick () { scp ${USER}@rick.eb.local:$1 .; }
+{{- end }}
 # Pretty table printing
 table () { column -t -s $'\t' "$1" | less -S; }
 # Jupyter
