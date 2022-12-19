@@ -1,0 +1,93 @@
+;; straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; load path
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+(add-to-list 'load-path "~/.emacs.d/pde/")
+
+;; el-get
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
+
+(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
+(el-get 'sync)
+
+;; snakemake
+;;(require 'snakemake-mode)
+
+;; groovy
+(straight-use-package 'groovy-mode)
+
+;; nextflow
+(straight-use-package '(nextflow-mode :type git :host github :repo "Emiller88/nextflow-mode"))
+(require 'nextflow-mode)
+
+;; search
+(setq search-whitespace-regexp nil)
+
+;; key bindings
+(global-set-key "\C-f" 'replace-regexp)
+
+;; cua & line-numbers
+(cua-mode t)
+(global-linum-mode t)
+
+
+;; backups
+(setq backup-directory-alist `(("." . "~/.emacs.d/saves/")))
+(setq backup-directory-alist
+          `((".*" . ,temporary-file-directory)))
+    (setq auto-save-file-name-transforms
+          `((".*" ,temporary-file-directory t)))
+
+
+;; moving
+(global-set-key (kbd "C-<down>") 'down5lines)
+(defun down5lines ()
+        (interactive)
+        (next-line 5))
+(global-set-key (kbd "C-<up>") 'up5lines)
+(defun up5lines ()
+        (interactive)
+        (previous-line 5))
+
+
+ ; Outline-minor-mode key map
+ (define-prefix-command 'cm-map nil "Outline-")
+ ; HIDE
+ (define-key cm-map "q" 'hide-sublevels)    ; Hide everything but the top-level headings
+ (define-key cm-map "t" 'hide-body)         ; Hide everything but headings (all body lines)
+ (define-key cm-map "o" 'hide-other)        ; Hide other branches
+ (define-key cm-map "c" 'hide-entry)        ; Hide this entry's body
+ (define-key cm-map "l" 'hide-leaves)       ; Hide body lines in this entry and sub-entries
+ (define-key cm-map "d" 'hide-subtree)      ; Hide everything in this entry and sub-entries
+ ; SHOW
+ (define-key cm-map "a" 'show-all)          ; Show (expand) everything
+ (define-key cm-map "e" 'show-entry)        ; Show this heading's body
+ (define-key cm-map "i" 'show-children)     ; Show this heading's immediate child sub-headings
+ (define-key cm-map "k" 'show-branches)     ; Show all sub-headings under this heading
+ (define-key cm-map "s" 'show-subtree)      ; Show (expand) everything in this heading & below
+ ; MOVE
+ (define-key cm-map "u" 'outline-up-heading)                ; Up
+ (define-key cm-map "n" 'outline-next-visible-heading)      ; Next
+ (define-key cm-map "p" 'outline-previous-visible-heading)  ; Previous
+ (define-key cm-map "f" 'outline-forward-same-level)        ; Forward - same level
+ (define-key cm-map "b" 'outline-backward-same-level)       ; Backward - same level
+ (global-set-key "\M-o" cm-map)
