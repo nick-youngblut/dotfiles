@@ -14,7 +14,9 @@ export DOCKER_DEFAULT_PLATFORM=linux/amd64
 {{- end }}
 
 # Prompt
+{{- if eq .chezmoi.os "darwin" }}
 autoload -U colors && colors
+{{- end }}
 PROMPT="%F{red}% %m: %F{cyan}% %d %F{green}% "$'\n'"$ %f"
 
 
@@ -40,8 +42,10 @@ alias rmdir='rm -rf'
 alias comp="tar -cvzf"
 alias uncomp="tar -pzxvf"
 # exa
+{{- if eq .chezmoi.os "darwin" }}
 alias ls="exa"
 alias lt="exa --tree --level=2"
+{{- end }}
 # Conda/Mamba
 alias ma="mamba activate"
 alias md="mamba deactivate"
@@ -116,7 +120,9 @@ dud () {
     fi
     find $D -mindepth 1 -maxdepth $d -type d "${@:3}" | xargs -I % bash -c "printf '%\t' && diskus %"
 }
+{{- if eq .chezmoi.os "darwin" }}
 compdef _gnu_generic dud
+{{- end }}
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
